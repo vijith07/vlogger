@@ -4,11 +4,21 @@
 #include <iostream>
 #include "vlogger.h"
 
+void log_it(int id,int line ,const char* src_file) {
+	std::string formattedString = std::format("ProcessId: {} Line {} File {}\n", id,line,src_file);
+	Vlogger::Trace(formattedString);
+}
+
 int main()
 {
-	const char* name = "User";
+	Vlogger::SetPriority(Vlogger::LogPriority::TracePriority);
+	std::thread threads[10];
+	for (int i = 0; i < 10; i++) {
+		threads[i] = std::thread(log_it, i,__LINE__,__FILE__);
+	}
+	for (int i = 0; i < 10; i++)
+		threads[i].join();
 	Vlogger::EnableFileOutput("logs.txt");
-	Vlogger::Critical("name");
 
 	return 0;
 }

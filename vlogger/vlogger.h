@@ -46,7 +46,7 @@ public:
 		return logger_instance.enableFileOutput();
 	}
 
-	static const char* GetFilepath()
+	static const std::string GetFilepath()
 	{
 		return get_instance().filepath;
 	}
@@ -57,32 +57,32 @@ public:
 	}
 
 
-	static void Trace(const char* message)
+	static void Trace(const std::string &message)
 	{
 		get_instance().log("[Trace]    ", TracePriority, message);
 	}
 
-	static void Debug(const char* message)
+	static void Debug(const std::string &message)
 	{
 		get_instance().log("[Debug]    ", DebugPriority, message);
 	}
 
-	static void Info(const char* message)
+	static void Info(const std::string &message)
 	{
 		get_instance().log("[Info]     ", InfoPriority, message);
 	}
 
-	static void Warn(const char* message)
+	static void Warn(const std::string &message)
 	{
 		get_instance().log("[Warn]     ", WarnPriority, message);
 	}
 
-	static void Error(const char* message)
+	static void Error(const std::string &message)
 	{
 		get_instance().log("[Error]    ", ErrorPriority, message);
 	}
 
-	static void Critical(const char* message)
+	static void Critical(const std::string &message)
 	{
 		get_instance().log("[Critical]     ", CriticalPriority, message);
 	}
@@ -104,7 +104,7 @@ private:
 		return instance;
 	}
 
-	void log(const char* message_priority_str, LogPriority message_priority, const char* message)
+	void log(const std::string message_priority_str, LogPriority message_priority, const std::string message)
 	{
 		if (priority <= message_priority)
 		{
@@ -116,8 +116,6 @@ private:
 			std::cout << timestamp << " ";
 			std::cout << message_priority_str << " ";
 			std::cout << message << " ";
-			std::cout << __LINE__ << " ";
-			std::cout << __FILE__ << " ";
 			std::cout << std::endl;
 
 			if (file.is_open())
@@ -127,6 +125,10 @@ private:
 				file << message << " ";
 				file << std::endl;
 			}
+		}
+		else {
+			std::scoped_lock lock(logger_mutex);
+			std::cout << "Invalid configruration.Choose higher Vlogger priority"<<std::endl;
 		}
 	}
 
